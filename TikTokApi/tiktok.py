@@ -10,7 +10,7 @@ import time
 from dataclasses import dataclass
 from typing import Optional
 from urllib.parse import urlencode, urlparse
-
+import xbogus
 import requests
 
 from .api.comment import Comment
@@ -232,8 +232,8 @@ class TikTokApi:
 
     def generate_x_bogus(self, path: str) -> str:
         query = urlparse(path).query
-        x_bogus = execjs.compile(open('./X-Bogus.js').read()).call('sign', query, self._user_agent)
-        print('生成的X-Bogus签名为: {}'.format(x_bogus))
+        x_bogus = execjs.compile(xbogus.X_BOGUS_JS).call('sign', query, self._user_agent)
+        print('generated X-Bogus Signature: {}'.format(x_bogus))
         return f"{path}&X-Bogus={x_bogus}"
 
     def get_data(self, path, subdomain="m", **kwargs) -> dict:
