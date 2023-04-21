@@ -42,11 +42,11 @@ class User:
     """The raw data associated with this user."""
 
     def __init__(
-        self,
-        username: Optional[str] = None,
-        user_id: Optional[str] = None,
-        sec_uid: Optional[str] = None,
-        data: Optional[dict] = None,
+            self,
+            username: Optional[str] = None,
+            user_id: Optional[str] = None,
+            sec_uid: Optional[str] = None,
+            data: Optional[dict] = None,
     ):
         """
         You must provide the username or (user_id and sec_uid) otherwise this
@@ -172,10 +172,7 @@ class User:
                 User.parent._add_url_params(), urlencode(query)
             )
 
-            # generate X-Bogus signature
-            path = User.parent.generate_x_bogus(path)
-
-            res = User.parent.get_data(path, send_tt_params=True, **kwargs)
+            res = User.parent.get_data(path, send_tt_params=True, x_bogus=True, **kwargs)
 
             videos = res.get("itemList", [])
             for video in videos:
