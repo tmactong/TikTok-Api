@@ -1,4 +1,5 @@
 requests
-playwright
+playwright==1.30.0
 selenium_stealth
 selenium
+PyExecJS==1.5.1

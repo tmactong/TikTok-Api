@@ -172,6 +172,9 @@ class User:
                 User.parent._add_url_params(), urlencode(query)
             )
 
+            # generate X-Bogus signature
+            path = User.parent.generate_x_bogus(path)
+
             res = User.parent.get_data(path, send_tt_params=True, **kwargs)
 
             videos = res.get("itemList", [])

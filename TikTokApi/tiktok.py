@@ -1,4 +1,5 @@
 import asyncio
+import execjs
 import json
 import logging
 import os
@@ -8,7 +9,7 @@ import threading
 import time
 from dataclasses import dataclass
 from typing import Optional
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 
 import requests
 
@@ -228,6 +229,12 @@ class TikTokApi:
             self._region = "US"
             self._language = "en"
             raise e from e
+
+    def generate_x_bogus(self, path: str) -> str:
+        query = urlparse(path).query
+        x_bogus = execjs.compile(open('./X-Bogus.js').read()).call('sign', query, self._user_agent)
+        print('生成的X-Bogus签名为: {}'.format(x_bogus))
+        return f"{path}&X-Bogus={x_bogus}"
 
     def get_data(self, path, subdomain="m", **kwargs) -> dict:
         """Makes requests to TikTok and returns their JSON.
