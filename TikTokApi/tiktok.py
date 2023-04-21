@@ -334,6 +334,11 @@ class TikTokApi:
         }
 
         self.logger.debug(f"GET: %s\n\theaders: %s", url, headers)
+
+        print(f'url: {url}')
+        print(f'headers: {headers}')
+        print(f'cookies: {self._get_cookies(**kwargs)}')
+
         r = requests.get(
             url,
             headers=headers,
