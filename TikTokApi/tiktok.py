@@ -12,6 +12,7 @@ from typing import Optional
 from urllib.parse import urlencode, urlparse
 from .xbogus import X_BOGUS_JS
 import requests
+import requests.cookies
 
 from .api.comment import Comment
 from .api.hashtag import Hashtag
@@ -476,43 +477,20 @@ class TikTokApi:
             parsed_data["referrer"],
         )
 
-    def _get_cookies(self, **kwargs):
-        """Extracts cookies from the kwargs passed to the function for get_data"""
-        device_id = kwargs.get(
-            "custom_device_id",
-            "".join(random.choice(string.digits) for num in range(19)),
-        )
-        if kwargs.get("custom_verify_fp") is None:
-            if self._custom_verify_fp is not None:
-                verifyFp = self._custom_verify_fp
-            else:
-                verifyFp = None
-        else:
-            verifyFp = kwargs.get("custom_verify_fp")
+    def _get_cookies(self, **kwargs) -> Optional[requests.cookies.RequestsCookieJar]:
+        if kwargs.get('cookie_file') is not None:
+            cookie_file = kwargs.get('cookie_file')
+            with open(cookie_file) as f:
+                cookies = json.load(f)
 
-        if kwargs.get("force_verify_fp_on_cookie_header", False):
-            return {
-                "tt_webid": device_id,
-                "tt_webid_v2": device_id,
-                "csrf_session_id": kwargs.get("csrf_session_id"),
-                "tt_csrf_token": "".join(
-                    random.choice(string.ascii_uppercase + string.ascii_lowercase)
-                    for i in range(16)
-                ),
-                "s_v_web_id": verifyFp,
-                "ttwid": kwargs.get("ttwid"),
-            }
-        else:
-            return {
-                "tt_webid": device_id,
-                "tt_webid_v2": device_id,
-                "csrf_session_id": kwargs.get("csrf_session_id"),
-                "tt_csrf_token": "".join(
-                    random.choice(string.ascii_uppercase + string.ascii_lowercase)
-                    for i in range(16)
-                ),
-                "ttwid": kwargs.get("ttwid"),
-            }
+            jar = requests.cookies.RequestsCookieJar()
+            for cookie in cookies:
+                jar.set(
+                    cookie.get('name'), cookie.get('value'),
+                    domain=cookie.get('domain'), path=cookie.get('path'),
+                    expires=cookie.get('expirationDate'), secure=cookie.get('secure')
+                )
+            return jar
 
     def get_bytes(self, **kwargs) -> bytes:
         """Returns TikTok's response as bytes, similar to get_data"""
