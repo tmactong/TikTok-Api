@@ -340,9 +340,9 @@ class TikTokApi:
         if x_bogus:
             url = self.generate_x_bogus(url)
 
-        print(f'url: {url}')
-        print(f'headers: {headers}')
-        print(f'cookies: {self._get_cookies(**kwargs)}')
+        # print(f'url: {url}')
+        # print(f'headers: {headers}')
+        # print(f'cookies: {self._get_cookies(**kwargs)}')
 
         r = requests.get(
             url,
